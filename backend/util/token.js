@@ -18,14 +18,30 @@ const createAccessToken = async (payload) => {
 
 // cookies
 const sendResponseWithCookie = ({ res, id }) => {
-    const token = createAccessToken({ id })
-    const oneDay = 1000 * 60 * 60 * 24; // 1day
-    res.cookie('token', token, {
-        httpOnly: true,
-        path: `/api/v1/auth/token/validate`,
-        expires: new Date(Date.now() + oneDay),
-        signed: true
-    });
+    let token = createAccessToken({ id })
+    return token;
 }
 
-module.exports = { createAccessToken, sendResponseWithCookie }
+
+// validate token
+const validateAuthToken = (token,res) => {
+    let secret_key = generateKey();
+    
+    jwt.verify(token,secret_key, (err,response) => {
+        if(err)
+            return res.status(400).json({ msg: "Invalid Authentication..Invalid Auth Token.."})
+        
+        res.status(200).json({ authToken: token })
+    })
+}
+
+
+//generate password token
+const passwordToken = (payload) => {
+    let secret_key = generateKey();
+    let token = jwt.sign(payload, secret_key,{ expiresIn: 10 * 60}) // 10min
+   return token;
+}
+
+
+module.exports = { createAccessToken, sendResponseWithCookie, validateAuthToken, generateKey, passwordToken }

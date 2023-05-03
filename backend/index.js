@@ -20,6 +20,8 @@ app.use(cookieParser(process.env.ACCESS_KEY))
 
 // route
 app.use(`/api/v1/auth`, require('./route/authRoute'))
+app.use(`/api/v1/job`, require('./route/jobRoute'))
+app.use(`/api/v1/applied`, require('./route/appliedJobRoute'))
 
 // default route
 app.all(`**`, (req,res) => {
